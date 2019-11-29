@@ -25,11 +25,11 @@ module Omnidocx
     VERTICAL_DPI = 117
 
     NAMESPACES = {
-      "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-      "wp": "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing",
-      "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
-      "pic": "http://schemas.openxmlformats.org/drawingml/2006/picture",
-      "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+      w: "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+      wp: "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing",
+      a: "http://schemas.openxmlformats.org/drawingml/2006/main",
+      pic: "http://schemas.openxmlformats.org/drawingml/2006/picture",
+      r: "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
     }
 
     IMAGE_ELEMENT = '<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" w:rsidR="00F127EA" w:rsidRDefault="00F127EA" w:rsidP="00BF4C96"><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:noProof/><w:lang w:eastAsia="en-IN"/></w:rPr><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0"><wp:extent cx="" cy=""/><wp:effectExtent l="0" t="0" r="2540" b="1905"/><wp:docPr id="" name=""/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="" name=""/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed=""><a:extLst><a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}"><a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/></a:ext></a:extLst></a:blip><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="" cy=""/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>'
@@ -299,6 +299,7 @@ module Omnidocx
           #updating the stlye ids in the table elements present in the document content XML
           doc_content = doc_cnt == 0 ? @main_body : Nokogiri::XML(zip_file.read(DOCUMENT_FILE_PATH))
           doc_content.xpath("//w:tbl").each do |tbl_node|
+            next if tbl_node.xpath('.//w:tblStyle').blank?
             val_attr = tbl_node.xpath('.//w:tblStyle').last.attributes['val']
             table_hash["doc#{doc_cnt}"][val_attr.value.to_s] = tbl_cnt
             val_attr.value = val_attr.value.gsub(/[0-9]+/, tbl_cnt.to_s)
